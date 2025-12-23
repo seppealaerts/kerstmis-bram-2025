@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kerstmis Walter 2025",
+  title: "Kerstmis Bram 2025",
   description: "A festive Christmas slide presentation",
 };
 

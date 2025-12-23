@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button, Box, Flex } from "@radix-ui/themes";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import styles from "./SlideContainer.module.css";
+import { useSlideNavigation } from "@/contexts/SlideNavigationContext";
 
 interface SlideContainerProps {
   children: React.ReactNode[];
@@ -14,6 +15,12 @@ export default function SlideContainer({ children }: SlideContainerProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
   const totalSlides = children.length;
+  const { canGoNext, setCanGoNext } = useSlideNavigation();
+
+  useEffect(() => {
+    // Reset canGoNext when slide changes
+    setCanGoNext(true);
+  }, [currentSlide, setCanGoNext]);
 
   const nextSlide = () => {
     if (currentSlide < totalSlides - 1) {
@@ -136,6 +143,7 @@ export default function SlideContainer({ children }: SlideContainerProps) {
                   variant="solid"
                   color="crimson"
                   className={styles.navButton}
+                  disabled={!canGoNext}
                 >
                   <span aria-hidden="true">Volgende slide →</span>
                 </Button>

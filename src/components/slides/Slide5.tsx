@@ -1,16 +1,33 @@
-import TicketSlide from "../TicketSlide";
+import ListSlide from "../ListSlide";
 
 export default function Slide5() {
-  const tickets = [
-    "Toegang tot de VIP tribune bij al mijn internationale tenniswedstrijden",
-    "Een exclusieve, door mij gesigneerde, limited edition tennisbal",
-    "Een nieuwe tennisracket en tennisschoenen naar keuze uit mijn eigen collectie, in samenwerking met Wilson",
-    "Een lessenreeks door mij, om je techniek wat bij te schaven",
-    "Een persoonlijke rondleiding door mijn luxueuze tennisvilla",
-    "Een privé jet trip naar Wimbledon, inclusief overnachting met luxeontbijt",
-    "Een diner met mij en Roger Federer (Roger is één van mijn grootste fans en kijkt erg naar me op)",
-    "Een kans om mijn 'lucky tennis socks' te dragen tijdens je belangrijkste wedstrijd",
+  const items = [
+    { content: "Breek iets dat normaal heel blijft", key: "3" },
+    {
+      content: "Een klein beetje van wat de zee bewaart is genoeg",
+      key: "7",
+    },
+    {
+      content: "Voeg het witte toe dat in bijna elke keuken woont",
+      key: "1",
+    },
+    { content: "Keer pas wanneer het moment juist voelt", key: "9" },
+    { content: "Breng alles samen tot het één geheel wordt", key: "0" },
+    { content: "Warm het vlak waar alles zal gebeuren", key: "4" },
+    {
+      content:
+        "Begin met iets vloeibaars dat vaker in glazen dan in pannen zit",
+      key: "6",
+    },
+    { content: "Laat het mengel voorzichtig zijn plaats vinden", key: "2" },
+    { content: "Stop wanneer kleur belangrijker wordt dan tijd", key: "8" },
+    {
+      content: "Wacht tot kleine tekenen aan de oppervlakte verschijnen",
+      key: "5",
+    },
   ];
 
-  return <TicketSlide title="Je cadeautje bevat:" tickets={tickets} />;
+  return (
+    <ListSlide title="Het recept:" items={items} correctPassword="6137042598" />
+  );
 }

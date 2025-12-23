@@ -1,25 +1,37 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Box, Heading } from "@radix-ui/themes";
-import Ticket from "./Ticket";
+import { Box, Heading, Text, TextField } from "@radix-ui/themes";
 import styles from "./TicketSlide.module.css";
+import { useSlideNavigation } from "@/contexts/SlideNavigationContext";
 
-interface TicketSlideProps {
+interface ListSlideProps {
   title: string;
-  tickets: Array<{ content: string; key: string }>;
+  items: Array<{ content: string; key: string }>;
+  correctPassword?: string;
 }
 
-export default function TicketSlide({ title, tickets }: TicketSlideProps) {
+export default function ListSlide({ title, items, correctPassword }: ListSlideProps) {
   const [showTopShadow, setShowTopShadow] = useState(false);
   const [showBottomShadow, setShowBottomShadow] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
+  const [password, setPassword] = useState("");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollTimeRef = useRef<number>(0);
+  const { setCanGoNext } = useSlideNavigation();
+
+  const isPasswordCorrect = correctPassword ? password === correctPassword : true;
 
   useEffect(() => {
-    // On mount, initialize lastScrollTimeRef.current to the current time
+    if (correctPassword) {
+      setCanGoNext(isPasswordCorrect);
+    } else {
+      setCanGoNext(true);
+    }
+  }, [password, correctPassword, isPasswordCorrect, setCanGoNext]);
+
+  useEffect(() => {
     lastScrollTimeRef.current = Date.now();
   }, []);
 
@@ -35,7 +47,6 @@ export default function TicketSlide({ title, tickets }: TicketSlideProps) {
     setShowTopShadow(hasScrolled);
     setShowBottomShadow(hasMoreBelow);
 
-    // Reset inactivity timer on scroll
     lastScrollTimeRef.current = Date.now();
     setShowScrollHint(false);
 
@@ -43,7 +54,6 @@ export default function TicketSlide({ title, tickets }: TicketSlideProps) {
       clearTimeout(inactivityTimerRef.current);
     }
 
-    // Only show hint if there's more content below and user hasn't scrolled
     if (hasMoreBelow) {
       inactivityTimerRef.current = setTimeout(() => {
         const timeSinceLastScroll = Date.now() - lastScrollTimeRef.current;
@@ -58,25 +68,20 @@ export default function TicketSlide({ title, tickets }: TicketSlideProps) {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    // Initial check
     checkScroll();
 
-    // Check on scroll
     const handleScroll = () => {
       checkScroll();
     };
     container.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Check on resize
     const resizeObserver = new ResizeObserver(() => {
       setTimeout(checkScroll, 0);
     });
     resizeObserver.observe(container);
 
-    // Also check after a short delay to ensure content is rendered
     const timeoutId = setTimeout(checkScroll, 100);
 
-    // Set initial inactivity timer
     const initialTimer = setTimeout(() => {
       if (scrollContainerRef.current) {
         const { scrollTop, scrollHeight, clientHeight } =
@@ -97,18 +102,39 @@ export default function TicketSlide({ title, tickets }: TicketSlideProps) {
         clearTimeout(inactivityTimerRef.current);
       }
     };
-  }, [tickets]);
+  }, [items]);
 
   return (
     <Box className={styles.ticketSlideContent}>
       <Heading size="8" className={styles.title}>
         {title}
       </Heading>
-      <div className={styles.ticketListWrapper}>
+      <div className={styles.ticketListWrapper} style={{ flex: correctPassword ? "1 1 0" : "1" }}>
         {showTopShadow && <div className={styles.scrollShadowTop} />}
         <div ref={scrollContainerRef} className={styles.ticketList}>
-          {tickets.map((ticket) => (
-            <Ticket key={ticket.key}>{ticket.content}</Ticket>
+          {items.map((item) => (
+            <Box
+              key={item.key}
+              style={{
+                background: "#ffffff",
+                border: "2px solid var(--christmas-green)",
+                borderRadius: "0.5rem",
+                marginBottom: "1rem",
+                boxShadow: "0 2px 8px rgba(26, 77, 46, 0.15)",
+                padding: "1rem 1.25rem",
+              }}
+            >
+              <Text
+                size="3"
+                style={{
+                  color: "var(--christmas-green)",
+                  fontWeight: 500,
+                  lineHeight: 1.4,
+                }}
+              >
+                {item.content} ({item.key})
+              </Text>
+            </Box>
           ))}
         </div>
         {showBottomShadow && (
@@ -121,6 +147,29 @@ export default function TicketSlide({ title, tickets }: TicketSlideProps) {
           </div>
         )}
       </div>
+      {correctPassword && (
+        <Box
+          style={{
+            padding: "1rem 0.5rem",
+            borderTop: "2px solid rgba(26, 77, 46, 0.1)",
+            flexShrink: 0,
+            width: "100%",
+            maxWidth: "90%",
+          }}
+        >
+          <TextField.Root
+            type="password"
+            placeholder="Voer wachtwoord in"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            size="3"
+            style={{
+              width: "100%",
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 }
+

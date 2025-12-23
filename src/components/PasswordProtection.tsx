@@ -15,7 +15,7 @@ export default function PasswordProtection({
     // Initialize state from sessionStorage during initial render
     if (typeof window !== "undefined") {
       return (
-        sessionStorage.getItem("kerst_app_walter_authenticated") === "true"
+        sessionStorage.getItem("kerst_app_bram_authenticated") === "true"
       );
     }
     return false;
@@ -29,7 +29,7 @@ export default function PasswordProtection({
 
     if (password === correctPassword) {
       setIsAuthenticated(true);
-      sessionStorage.setItem("kerst_app_walter_authenticated", "true");
+      sessionStorage.setItem("kerst_app_bram_authenticated", "true");
       setError("");
     } else {
       setError("Wachtwoord is incorrect. Probeer opnieuw.");
