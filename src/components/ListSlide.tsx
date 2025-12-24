@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Box, Heading, Text, TextField } from "@radix-ui/themes";
-import styles from "./TicketSlide.module.css";
+import styles from "./ListSlide.module.css";
 import { useSlideNavigation } from "@/contexts/SlideNavigationContext";
 
 interface ListSlideProps {
@@ -11,7 +11,11 @@ interface ListSlideProps {
   correctPassword?: string;
 }
 
-export default function ListSlide({ title, items, correctPassword }: ListSlideProps) {
+export default function ListSlide({
+  title,
+  items,
+  correctPassword,
+}: ListSlideProps) {
   const [showTopShadow, setShowTopShadow] = useState(false);
   const [showBottomShadow, setShowBottomShadow] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
@@ -21,7 +25,9 @@ export default function ListSlide({ title, items, correctPassword }: ListSlidePr
   const lastScrollTimeRef = useRef<number>(0);
   const { setCanGoNext } = useSlideNavigation();
 
-  const isPasswordCorrect = correctPassword ? password === correctPassword : true;
+  const isPasswordCorrect = correctPassword
+    ? password === correctPassword
+    : true;
 
   useEffect(() => {
     if (correctPassword) {
@@ -105,13 +111,18 @@ export default function ListSlide({ title, items, correctPassword }: ListSlidePr
   }, [items]);
 
   return (
-    <Box className={styles.ticketSlideContent}>
+    <Box className={styles.listSlideContent}>
       <Heading size="8" className={styles.title}>
         {title}
       </Heading>
-      <div className={styles.ticketListWrapper} style={{ flex: correctPassword ? "1 1 0" : "1" }}>
+      <div
+        className={`${styles.listListWrapper} ${
+          correctPassword ? styles.hasPassword : ""
+        }`}
+        style={{ flex: correctPassword ? "1 1 0" : "1" }}
+      >
         {showTopShadow && <div className={styles.scrollShadowTop} />}
-        <div ref={scrollContainerRef} className={styles.ticketList}>
+        <div ref={scrollContainerRef} className={styles.listList}>
           {items.map((item) => (
             <Box
               key={item.key}
@@ -148,17 +159,9 @@ export default function ListSlide({ title, items, correctPassword }: ListSlidePr
         )}
       </div>
       {correctPassword && (
-        <Box
-          style={{
-            padding: "1rem 0.5rem",
-            borderTop: "2px solid rgba(26, 77, 46, 0.1)",
-            flexShrink: 0,
-            width: "100%",
-            maxWidth: "90%",
-          }}
-        >
+        <Box className={styles.passwordField}>
           <TextField.Root
-            type="password"
+            type="text"
             placeholder="Voer wachtwoord in"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -172,4 +175,3 @@ export default function ListSlide({ title, items, correctPassword }: ListSlidePr
     </Box>
   );
 }
-
